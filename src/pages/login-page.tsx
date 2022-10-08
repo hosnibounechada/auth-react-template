@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { verifyInput } from "../services/input-verification";
 import useRequest from "../hooks/use-request";
 import useNavigate from "../hooks/use-navigate";
+import AuthContext from "../context/auth-provider";
 
 const Login = () => {
+  const { setAuth } = useContext(AuthContext);
+
   const [input, setInput] = useState<{ name: string; value: string }>({ name: "username", value: "" });
   const [password, setPassword] = useState("");
   const { doNavigate } = useNavigate({ page: "/home" });
@@ -16,7 +19,9 @@ const Login = () => {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await doRequest();
+    const { user, accessToken } = await doRequest();
+    if (!user) return;
+    setAuth({ user: { ...user, accessToken } });
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,7 +122,13 @@ const Login = () => {
           <div>
             <ul>
               {errors.map((error: any, index: number) => (
-                <li key={index}>- {error.message}</li>
+                // <li key={index}>- {error.message}</li>
+                <li key={index}>
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <strong className="font-bold">Error: </strong>
+                    <span className="block sm:inline">{error.message}</span>
+                  </div>
+                </li>
               ))}
             </ul>
           </div>
