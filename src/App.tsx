@@ -4,7 +4,6 @@ import Home from "./pages/home";
 import Landing from "./pages/landing-page";
 import Login from "./pages/login-page";
 import Register from "./pages/register";
-
 function App() {
   return (
     <BrowserRouter>
@@ -18,5 +17,49 @@ function App() {
     </BrowserRouter>
   );
 }
-
 export default App;
+
+//************************************************************/
+
+// import { useAppSelector, useAppDispatch } from "./app/hooks";
+// import { incremented, decrement, incrementByAmount } from "./features/counter/counter-slice";
+// import { useFetchBreedsQuery } from "./features/dogs/dog-slice";
+
+// function App() {
+//   const count = useAppSelector((state) => state.counter.value);
+//   const dispatch = useAppDispatch();
+
+//   const { data = [], isFetching } = useFetchBreedsQuery();
+
+//   return (
+//     <div>
+//       <h1>Counter is: {count}</h1>
+//       <button onClick={() => dispatch(incremented())}>Increment</button>
+//       <br />
+//       <button onClick={() => dispatch(decrement())}>Decrement</button>
+//       <br />
+//       <button onClick={() => dispatch(incrementByAmount(5))}>Increment By Value</button>
+//       <br />
+//       <table>
+//         <thead>
+//           <tr>
+//             <th>Name</th>
+//             <th>Picture</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {data.map((breed) => (
+//             <tr key={breed.id}>
+//               <td>{breed.name}</td>
+//               <td>
+//                 <img src={breed.image.url} alt={breed.name} height={250} />
+//               </td>
+//             </tr>
+//           ))}
+//         </tbody>
+//       </table>
+//     </div>
+//   );
+// }
+
+// export default App;

@@ -1,23 +1,29 @@
 import React, { useState } from "react";
-// import axios from "../apis/axios";
-import axios from "axios";
+import { verifyInput } from "../services/input-verification";
+import useRequest from "../hooks/use-request";
+import useNavigate from "../hooks/use-navigate";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [input, setInput] = useState<{ name: string; value: string }>({ name: "username", value: "" });
   const [password, setPassword] = useState("");
+  const { doNavigate } = useNavigate({ page: "/home" });
+  const { doRequest, errors } = useRequest({
+    url: "/login",
+    method: "post",
+    body: { [input.name]: input.value, password },
+    onSuccess: () => doNavigate(),
+  });
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const result = await axios.post("/login", {
-        email,
-        password,
-      });
-      console.log(result.data);
-    } catch (error: any) {
-      console.log(error.response.data);
-    }
+    await doRequest();
   };
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const data = verifyInput(e.target.value);
+    setInput({ name: data.name, value: e.target.value });
+  };
+
   return (
     <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
@@ -35,14 +41,14 @@ const Login = () => {
               </label>
               <input
                 id="email-address"
-                name="email"
-                type="email"
+                name="username"
+                type="text"
                 autoComplete="email"
                 required
                 className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Username Or Email"
+                value={input.value}
+                onChange={(e) => onChange(e)}
               />
             </div>
             <div>
@@ -107,6 +113,15 @@ const Login = () => {
             </button>
           </div>
         </form>
+        {errors.length > 0 && (
+          <div>
+            <ul>
+              {errors.map((error: any, index: number) => (
+                <li key={index}>- {error.message}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

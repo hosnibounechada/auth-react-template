@@ -1,3 +1,6 @@
+import useRequest from "../hooks/use-request";
+import useNavigate from "../hooks/use-navigate";
+
 const features = [
   { name: "Origin", description: "Designed by Good Goods, Inc." },
   { name: "Material", description: "Solid walnut base with rare earth magnets and powder coated steel card cover" },
@@ -8,10 +11,21 @@ const features = [
 ];
 
 const Home = () => {
+  const { doNavigate } = useNavigate({ page: "/login" });
+  const { doRequest } = useRequest({ url: "/refresh", method: "get", onFailure: () => doNavigate() });
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await doRequest();
+  };
+
   return (
     <div className="bg-white">
       <div className="mx-auto grid max-w-2xl grid-cols-1 items-center gap-y-16 gap-x-8 py-24 px-4 sm:px-6 sm:py-32 lg:max-w-7xl lg:grid-cols-2 lg:px-8">
         <div>
+          <form onSubmit={onSubmit}>
+            <button type="submit">Get Current User</button>
+          </form>
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Technical Specifications</h2>
           <p className="mt-4 text-gray-500">
             The walnut wood card tray is precision milled to perfectly fit a stack of Focus cards. The powder coated steel divider separates active

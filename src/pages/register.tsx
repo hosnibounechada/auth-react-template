@@ -1,45 +1,17 @@
 import React, { useState } from "react";
-import axios from "../apis/axios";
+import useRequest from "../hooks/use-request";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { doRequest, errors } = useRequest({ url: "/register", method: "post", body: { firstName, lastName, email, password } });
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await axios.post("/register", {
-      firstName,
-      lastName,
-      email,
-      password,
-    });
-    console.log(result);
+    await doRequest();
   };
-  // return (
-  //   <div>
-  //     <form onSubmit={onSubmit}>
-  //       <div>
-  //         <label htmlFor="first-name">First Name:</label>
-  //         <input id="first-name" type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-  //       </div>
-  //       <div>
-  //         <label htmlFor="last-name">Last Name:</label>
-  //         <input id="last-name" type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
-  //       </div>
-  //       <div>
-  //         <label htmlFor="email">Email:</label>
-  //         <input id="email" type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
-  //       </div>
-  //       <div>
-  //         <label htmlFor="password">Password:</label>
-  //         <input id="password" type="text" value={password} onChange={(e) => setPassword(e.target.value)} />
-  //       </div>
-  //       <button type="submit">Sign Up</button>
-  //     </form>
-  //   </div>
-  // );
 
   return (
     <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -141,6 +113,15 @@ const Register = () => {
             </button>
           </div>
         </form>
+        {errors.length > 0 && (
+          <div>
+            <ul>
+              {errors.map((error: any, index: number) => (
+                <li key={index}>- {error.message}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
