@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "../apis/axios";
+import useAuth from "./use-auth";
 
 type Method = "head" | "options" | "put" | "post" | "patch" | "delete" | "get";
 
@@ -11,11 +12,18 @@ interface UseRequestProps {
   onFailure?: CallableFunction;
 }
 
-const useRequest = ({ url, method, body, onSuccess, onFailure }: UseRequestProps) => {
+const useRequestPrivate = ({ url, method, body, onSuccess, onFailure }: UseRequestProps) => {
+  const { auth } = useAuth();
   const [errors, setErrors] = useState<{ message: string; field?: string }[]>([]);
-  const doRequest = async () => {
+  const [token, setToken] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    setToken(auth.user?.accessToken);
+  }, [auth.user?.accessToken]);
+
+  const doRequestPrivate = async () => {
     try {
-      const response = await axios[method](url, body);
+      const response = await axios[method](url, { headers: { authorization: `Bearer ${token}` } }, body);
       if (onSuccess) {
         onSuccess(response.data);
       }
@@ -28,7 +36,7 @@ const useRequest = ({ url, method, body, onSuccess, onFailure }: UseRequestProps
       setErrors(err.response.data.errors);
     }
   };
-  return { doRequest, errors };
+  return { doRequestPrivate, errors };
 };
 
-export default useRequest;
+export default useRequestPrivate;
