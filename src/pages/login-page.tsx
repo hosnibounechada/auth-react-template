@@ -1,12 +1,9 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { verifyInput } from "../services/input-verification";
-import useRequest from "../hooks/use-request";
-import useNavigate from "../hooks/use-navigate";
-import AuthContext from "../context/auth-provider";
+import { useAuth, useNavigate, useRequest } from "../hooks";
 
 const Login = () => {
-  const { setAuth } = useContext(AuthContext);
-
+  const { setAuth } = useAuth();
   const [input, setInput] = useState<{ name: string; value: string }>({ name: "username", value: "" });
   const [password, setPassword] = useState("");
   const { doNavigate } = useNavigate({ page: "/home" });
@@ -14,7 +11,6 @@ const Login = () => {
     url: "/login",
     method: "post",
     body: { [input.name]: input.value, password },
-    onSuccess: () => doNavigate(),
   });
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -22,6 +18,7 @@ const Login = () => {
     const { user, accessToken } = await doRequest();
     if (!user) return;
     setAuth({ user: { ...user, accessToken } });
+    doNavigate();
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,6 +1,4 @@
-import useRequest from "../hooks/use-request";
-import useNavigate from "../hooks/use-navigate";
-
+import { useNavigate, useRefresh } from "../hooks";
 const features = [
   { name: "Origin", description: "Designed by Good Goods, Inc." },
   { name: "Material", description: "Solid walnut base with rare earth magnets and powder coated steel card cover" },
@@ -12,11 +10,11 @@ const features = [
 
 const Home = () => {
   const { doNavigate } = useNavigate({ page: "/login" });
-  const { doRequest } = useRequest({ url: "/refresh", method: "get", onFailure: () => doNavigate() });
+  const { doRefresh } = useRefresh({ onFailure: doNavigate });
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await doRequest();
+    await doRefresh();
   };
 
   return (
