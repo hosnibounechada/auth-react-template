@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 
-const useNavigation = ({ page }: { page: string }) => {
+const useNavigation = () => {
   const navigate = useNavigate();
 
-  const doNavigate = async () => {
+  const doNavigate = async ({ page }: { page: string }) => {
     navigate(page);
   };
   return { doNavigate };

@@ -6,7 +6,7 @@ const Login = () => {
   const { setAuth } = useAuth();
   const [input, setInput] = useState<{ name: string; value: string }>({ name: "username", value: "" });
   const [password, setPassword] = useState("");
-  const { doNavigate } = useNavigate({ page: "/home" });
+  const { doNavigate } = useNavigate();
   const { doRequest, errors } = useRequest({
     url: "/login",
     method: "post",
@@ -15,10 +15,12 @@ const Login = () => {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const { user, accessToken } = await doRequest();
-    if (!user) return;
+
     setAuth({ user: { ...user, accessToken } });
-    doNavigate();
+
+    doNavigate({ page: "/home" });
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {

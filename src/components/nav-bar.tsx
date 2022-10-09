@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-// import axios from "../apis/axios";
-import { useAuth, useNavigate } from "../hooks";
-import useRequestPrivate from "../hooks/use-request-private";
+import { useAuth, useNavigate, useRequestPrivate } from "../hooks";
 
 const Navbar = () => {
   const { auth, setAuth } = useAuth();
@@ -10,20 +8,14 @@ const Navbar = () => {
 
   const [navbarOpen, setNavbarOpen] = useState(false);
 
-  const { doNavigate } = useNavigate({ page: "/" });
+  const { doNavigate } = useNavigate();
 
   const onLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    // try {
-    //   const res = axios.get("/logout", { headers: { Authorization: `Bearer ${auth.user?.accessToken}` } });
-    //   if (!res) return;
-    //   setAuth({ user: null });
-    //   doNavigate();
-    // } catch (err) {}
     const response = await doRequestPrivate();
     if (!response) return;
     setAuth({ user: null });
-    doNavigate();
+    doNavigate({ page: "/" });
   };
 
   return (
@@ -62,11 +54,6 @@ const Navbar = () => {
                   <span className="ml-2">Home</span>
                 </Link>
               </li>
-              {/* <li className="nav-item">
-                <Link to="/login" className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75">
-                  <span className="ml-2">Logout</span>
-                </Link>
-              </li> */}
               <li className="nav-item">
                 <button
                   className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75"

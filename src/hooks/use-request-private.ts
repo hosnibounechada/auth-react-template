@@ -1,29 +1,51 @@
 import { useEffect, useState } from "react";
-import axios from "../apis/axios";
-import useAuth from "./use-auth";
-
-type Method = "head" | "options" | "put" | "post" | "patch" | "delete" | "get";
-
-interface UseRequestProps {
-  url: string;
-  method: Method;
-  body?: any;
-  onSuccess?: CallableFunction;
-  onFailure?: CallableFunction;
-}
+import axiosPrivate from "../apis/axios";
+import { useNavigate, useRefresh, useAuth } from ".";
+import { UseRequestProps } from "../types/hooks";
+import { ErrorApi } from "../types/errors";
 
 const useRequestPrivate = ({ url, method, body, onSuccess, onFailure }: UseRequestProps) => {
-  const { auth } = useAuth();
-  const [errors, setErrors] = useState<{ message: string; field?: string }[]>([]);
-  const [token, setToken] = useState<string | undefined>(undefined);
+  const { auth, setAuth } = useAuth();
+  const { doNavigate } = useNavigate();
+  const { doRefresh } = useRefresh();
+  const [errors, setErrors] = useState<ErrorApi>([]);
 
   useEffect(() => {
-    setToken(auth.user?.accessToken);
-  }, [auth.user?.accessToken]);
+    const requestIntercept = axiosPrivate.interceptors.request.use(
+      (config) => {
+        config.headers!.Authorization = config.headers!.Authorization ?? `Bearer ${auth.user?.accessToken}`;
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
+
+    const responseIntercept = axiosPrivate.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        if (error.response.status === 422) {
+          setAuth({ user: null });
+          return;
+        }
+        const prevRequest = error?.config;
+        if (error.response.status === 401 && !prevRequest.sent) {
+          prevRequest.sent = true;
+          const newAccessToken = await doRefresh();
+          prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+          return axiosPrivate(prevRequest);
+        }
+        return Promise.reject(error);
+      }
+    );
+    return () => {
+      axiosPrivate.interceptors.request.eject(requestIntercept);
+      axiosPrivate.interceptors.response.eject(responseIntercept);
+    };
+  }, [auth, doRefresh, doNavigate, setAuth]);
 
   const doRequestPrivate = async () => {
     try {
-      const response = await axios[method](url, { headers: { authorization: `Bearer ${token}` } }, body);
+      const controller = new AbortController();
+      const response = await axiosPrivate[method](url, { signal: controller.signal }, body);
       if (onSuccess) {
         onSuccess(response.data);
       }

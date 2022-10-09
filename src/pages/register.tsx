@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useRequest from "../hooks/use-request";
+import { useRequest } from "../hooks";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");

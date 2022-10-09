@@ -1,4 +1,4 @@
-import { useNavigate, useRefresh } from "../hooks";
+import { useRefresh } from "../hooks";
 const features = [
   { name: "Origin", description: "Designed by Good Goods, Inc." },
   { name: "Material", description: "Solid walnut base with rare earth magnets and powder coated steel card cover" },
@@ -9,8 +9,7 @@ const features = [
 ];
 
 const Home = () => {
-  const { doNavigate } = useNavigate({ page: "/login" });
-  const { doRefresh } = useRefresh({ onFailure: doNavigate });
+  const { doRefresh } = useRefresh();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +21,9 @@ const Home = () => {
       <div className="mx-auto grid max-w-2xl grid-cols-1 items-center gap-y-16 gap-x-8 py-24 px-4 sm:px-6 sm:py-32 lg:max-w-7xl lg:grid-cols-2 lg:px-8">
         <div>
           <form onSubmit={onSubmit}>
-            <button type="submit">Get Current User</button>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit">
+              Get new Access Token
+            </button>
           </form>
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Technical Specifications</h2>
           <p className="mt-4 text-gray-500">

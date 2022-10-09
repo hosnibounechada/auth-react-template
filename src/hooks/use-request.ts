@@ -1,18 +1,10 @@
 import { useState } from "react";
 import axios from "../apis/axios";
-
-type Method = "head" | "options" | "put" | "post" | "patch" | "delete" | "get";
-
-interface UseRequestProps {
-  url: string;
-  method: Method;
-  body?: any;
-  onSuccess?: CallableFunction;
-  onFailure?: CallableFunction;
-}
+import { UseRequestProps } from "../types/hooks";
+import { ErrorApi } from "../types/errors";
 
 const useRequest = ({ url, method, body, onSuccess, onFailure }: UseRequestProps) => {
-  const [errors, setErrors] = useState<{ message: string; field?: string }[]>([]);
+  const [errors, setErrors] = useState<ErrorApi>([]);
   const doRequest = async () => {
     try {
       const response = await axios[method](url, body);

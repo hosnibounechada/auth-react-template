@@ -1,19 +1,24 @@
-import useAuth from "./use-auth";
-import useRequest from "./use-request";
+import { useAuth, useRequest, useNavigate } from ".";
 
-const useRefresh = ({ onFailure }: { onFailure: CallableFunction }) => {
-  const { auth, setAuth } = useAuth();
-
+const useRefresh = () => {
+  const { setAuth } = useAuth();
   const { doRequest } = useRequest({ url: "/refresh", method: "get" });
+  const { doNavigate } = useNavigate();
 
   const doRefresh = async () => {
-    const response = await doRequest();
+    try {
+      const response = await doRequest();
 
-    if (!response.accessToken || !auth.user) return onFailure();
+      const { user, accessToken } = response;
 
-    setAuth({ ...auth, user: { ...auth.user, accessToken: response.accessToken } });
+      setAuth({ user: { ...user, accessToken } });
 
-    return response.accessToken;
+      return response.accessToken;
+    } catch (error) {
+      setAuth({ user: null });
+
+      doNavigate({ page: "/login" });
+    }
   };
   return { doRefresh };
 };

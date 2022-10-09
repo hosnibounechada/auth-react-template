@@ -1,20 +1,8 @@
 import React, { createContext, useState } from "react";
+import { User } from "../types/auth";
 
 type AuthContextProps = {
   children: React.ReactNode;
-};
-
-type User = {
-  id: string;
-  username: string;
-  fullName: {
-    firstName: string;
-    lastName: String;
-  };
-  email: string;
-  picture: string;
-  thumbnail: string;
-  accessToken: string;
 };
 
 const AuthContext = createContext<{ auth: { user: User | null }; setAuth: React.Dispatch<React.SetStateAction<{ user: User | null }>> }>({
