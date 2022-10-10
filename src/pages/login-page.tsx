@@ -1,12 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { verifyInput } from "../services/input-verification";
-import { useAuth, useNavigate, useRequest } from "../hooks";
+import { useAuth, useRequest } from "../hooks";
 
 const Login = () => {
-  const { setAuth } = useAuth();
+  const { setAuth, persist, setPersist } = useAuth();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/home";
+
   const [input, setInput] = useState<{ name: string; value: string }>({ name: "username", value: "" });
   const [password, setPassword] = useState("");
-  const { doNavigate } = useNavigate();
+
   const { doRequest, errors } = useRequest({
     url: "/login",
     method: "post",
@@ -20,13 +26,21 @@ const Login = () => {
 
     setAuth({ user: { ...user, accessToken } });
 
-    doNavigate({ page: "/home" });
+    navigate(from, { replace: true });
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const data = verifyInput(e.target.value);
     setInput({ name: data.name, value: e.target.value });
   };
+
+  const togglePersist = () => {
+    setPersist(!persist);
+  };
+
+  useEffect(() => {
+    localStorage.setItem("persist", JSON.stringify(persist));
+  }, [persist]);
 
   return (
     <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -80,6 +94,8 @@ const Login = () => {
                 name="remember-me"
                 type="checkbox"
                 className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                onChange={togglePersist}
+                checked={persist}
               />
               <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
                 Remember me
