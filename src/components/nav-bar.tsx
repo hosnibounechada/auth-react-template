@@ -1,25 +1,25 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth, useNavigate, useRequestPrivate } from "../hooks";
+import { useAuth } from "../hooks";
+import { useNavigate, useLocation } from "react-router-dom";
+import useLogout from "../hooks/use-logout";
 
 const Navbar = () => {
-  const { auth, setAuth } = useAuth();
-  const { doRequestPrivate } = useRequestPrivate({ url: "/logout", method: "get" });
-
+  const { auth } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [navbarOpen, setNavbarOpen] = useState(false);
 
-  const { doNavigate } = useNavigate();
+  const { doLogout } = useLogout();
 
   const onLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const response = await doRequestPrivate();
-    if (!response) return;
-    setAuth({ user: null });
-    doNavigate({ page: "/" });
+    await doLogout();
+    navigate("/");
   };
 
   return (
-    <nav className="relative flex flex-wrap items-center justify-between px-2 py-3 bg-indigo-600 mb-3">
+    <header className="relative flex flex-wrap items-center justify-between px-2 py-3 bg-indigo-600 mb-3">
       <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
         <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
           <Link to="/" className="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white">
@@ -34,14 +34,21 @@ const Navbar = () => {
           </button>
         </div>
         <div className={"lg:flex flex-grow items-center" + (navbarOpen ? " flex" : " hidden")} id="example-navbar-danger">
+          <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
+            <li className="nav-item">
+              <Link to="/private" className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75">
+                <span className="ml-2">Private</span>
+              </Link>
+            </li>
+          </ul>
           {!auth.user ? (
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
-              <li className="nav-item">
+              <li className={`${location.pathname === "/register" ? "hidden" : ""} nav-item`}>
                 <Link to="/register" className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75">
                   <span className="ml-2">Sign-up</span>
                 </Link>
               </li>
-              <li className="nav-item">
+              <li className={`${location.pathname === "/login" ? "hidden" : ""} nav-item`}>
                 <Link to="/login" className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75">
                   <span className="ml-2">Login</span>
                 </Link>
@@ -66,7 +73,7 @@ const Navbar = () => {
           )}
         </div>
       </div>
-    </nav>
+    </header>
   );
 };
 
