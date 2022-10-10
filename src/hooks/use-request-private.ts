@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import axiosPrivate from "../apis/axios";
-import { useNavigate, useRefresh, useAuth } from ".";
+import { useRefresh, useAuth } from ".";
 import { UseRequestProps } from "../types/hooks";
 import { ErrorApi } from "../types/errors";
 
 const useRequestPrivate = ({ url, method, body, onSuccess, onFailure }: UseRequestProps) => {
   const { auth, setAuth } = useAuth();
-  const { doNavigate } = useNavigate();
   const { doRefresh } = useRefresh();
   const [errors, setErrors] = useState<ErrorApi>([]);
 
@@ -22,10 +21,6 @@ const useRequestPrivate = ({ url, method, body, onSuccess, onFailure }: UseReque
     const responseIntercept = axiosPrivate.interceptors.response.use(
       (response) => response,
       async (error) => {
-        if (error.response.status === 422) {
-          setAuth({ user: null });
-          return;
-        }
         const prevRequest = error?.config;
         if (error.response.status === 401 && !prevRequest.sent) {
           prevRequest.sent = true;
@@ -40,7 +35,7 @@ const useRequestPrivate = ({ url, method, body, onSuccess, onFailure }: UseReque
       axiosPrivate.interceptors.request.eject(requestIntercept);
       axiosPrivate.interceptors.response.eject(responseIntercept);
     };
-  }, [auth, doRefresh, doNavigate, setAuth]);
+  }, [auth, doRefresh, setAuth]);
 
   const doRequestPrivate = async () => {
     try {

@@ -1,23 +1,20 @@
-import { useAuth, useRequest, useNavigate } from ".";
-
+import { useNavigate } from "react-router-dom";
+import { useAuth, useRequest } from ".";
 const useRefresh = () => {
   const { setAuth } = useAuth();
   const { doRequest } = useRequest({ url: "/refresh", method: "get" });
-  const { doNavigate } = useNavigate();
+  const navigate = useNavigate();
 
   const doRefresh = async () => {
     try {
-      const response = await doRequest();
-
-      const { user, accessToken } = response;
+      const { user, accessToken } = await doRequest();
 
       setAuth({ user: { ...user, accessToken } });
 
-      return response.accessToken;
+      return accessToken;
     } catch (error) {
       setAuth({ user: null });
-
-      doNavigate({ page: "/login" });
+      navigate("/login");
     }
   };
   return { doRefresh };
