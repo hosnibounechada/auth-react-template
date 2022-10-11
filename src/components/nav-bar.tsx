@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../hooks";
 import { useNavigate, useLocation } from "react-router-dom";
 import useLogout from "../hooks/use-logout";
+import socket from "../services/socket";
 
 const Navbar = () => {
   const { auth } = useAuth();
@@ -15,6 +16,7 @@ const Navbar = () => {
   const onLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     await doLogout();
+    socket.disconnect();
     navigate("/");
   };
 

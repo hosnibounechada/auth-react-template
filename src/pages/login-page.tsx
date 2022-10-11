@@ -23,7 +23,6 @@ const Login = () => {
     e.preventDefault();
 
     const { user, accessToken } = await doRequest();
-
     setAuth({ user: { ...user, accessToken } });
 
     navigate(from, { replace: true });

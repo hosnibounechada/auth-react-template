@@ -1,3 +1,4 @@
+import useSocketSetup from "../hooks/use-socket-setup";
 const features = [
   { name: "Origin", description: "Designed by Good Goods, Inc." },
   { name: "Material", description: "Solid walnut base with rare earth magnets and powder coated steel card cover" },
@@ -8,6 +9,7 @@ const features = [
 ];
 
 const Home = () => {
+  useSocketSetup();
   return (
     <div className="bg-white">
       <div className="mx-auto grid max-w-2xl grid-cols-1 items-center gap-y-16 gap-x-8 py-24 px-4 sm:px-6 sm:py-32 lg:max-w-7xl lg:grid-cols-2 lg:px-8">

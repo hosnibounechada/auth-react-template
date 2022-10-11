@@ -7,17 +7,20 @@ import Login from "./pages/login-page";
 import Register from "./pages/register";
 import Private from "./pages/private";
 import PersistLogin from "./components/persist-login";
+import IsNotAuth from "./components/is-not-auth";
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        {/* Private routes */}
         <Route element={<PersistLogin />}>
+          <Route element={<IsNotAuth />}>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
+          {/* Private routes */}
           <Route element={<RequireAuth />}>
             <Route path="/home" element={<Home />} />
             <Route path="/private" element={<Private />} />
