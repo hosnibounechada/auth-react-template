@@ -1,16 +1,21 @@
 import React, { useState } from "react";
 import { useRequest } from "../hooks";
-
+import { useNavigate } from "react-router-dom";
 const Register = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { doRequest, errors } = useRequest({ url: "/register", method: "post", body: { firstName, lastName, email, password } });
-
+  const navigate = useNavigate();
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await doRequest();
+    try {
+      await doRequest();
+      navigate("/accountVerification", { state: { email } });
+    } catch (err: any) {
+      console.log(err);
+    }
   };
 
   return (

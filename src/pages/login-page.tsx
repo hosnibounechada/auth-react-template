@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { verifyInput } from "../services/input-verification";
 import { useAuth, useRequest } from "../hooks";
 
@@ -17,15 +17,22 @@ const Login = () => {
     url: "/login",
     method: "post",
     body: { [input.name]: input.value, password },
+    onFailure: () => navigate("/accountVerification", { state: { [input.name]: input.value } }),
   });
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      const response = await doRequest();
 
-    const { user, accessToken } = await doRequest();
-    setAuth({ user: { ...user, accessToken } });
+      const { user, accessToken } = response;
 
-    navigate(from, { replace: true });
+      setAuth({ user: { ...user, accessToken } });
+
+      navigate(from, { replace: true });
+    } catch (err: any) {
+      // console.log(err);
+    }
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,9 +109,9 @@ const Login = () => {
             </div>
 
             <div className="text-sm">
-              <a href="http://localhost:5000/forgotPassword" className="font-medium text-indigo-600 hover:text-indigo-500">
+              <Link to="/forgotPassword" className="font-medium text-indigo-600 hover:text-indigo-500">
                 Forgot your password?
-              </a>
+              </Link>
             </div>
           </div>
 

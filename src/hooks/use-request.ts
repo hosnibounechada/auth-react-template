@@ -2,8 +2,10 @@ import { useState } from "react";
 import axios from "../apis/axios";
 import { UseRequestProps } from "../types/hooks";
 import { ErrorApi } from "../types/errors";
+// import { useNavigate } from "react-router-dom";
 
 const useRequest = ({ url, method, body, onSuccess, onFailure }: UseRequestProps) => {
+  // const navigate = useNavigate();
   const [errors, setErrors] = useState<ErrorApi>([]);
   const doRequest = async () => {
     try {
@@ -13,10 +15,9 @@ const useRequest = ({ url, method, body, onSuccess, onFailure }: UseRequestProps
       }
       return response.data;
     } catch (err: any) {
-      if (onFailure) {
-        onFailure(err);
-      }
-      if (err.response.status === 0) return setErrors([{ message: "No server response" }]);
+      if (err.response.status === 401 && onFailure) return onFailure();
+      if (err.response.status === 0) setErrors([{ message: "No server response" }]);
+      if (err.response.status === 401) setErrors([{ message: "Not authorized" }]);
       setErrors(err.response.data.errors);
     }
   };
