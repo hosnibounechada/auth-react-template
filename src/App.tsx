@@ -1,4 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import PersistLogin from "./components/persist-login";
+import IsNotAuth from "./components/is-not-auth";
 import RequireAuth from "./components/require-auth";
 import Navbar from "./components/nav-bar";
 import Home from "./pages/home";
@@ -6,8 +8,9 @@ import Landing from "./pages/landing-page";
 import Login from "./pages/login-page";
 import Register from "./pages/register";
 import Private from "./pages/private";
-import PersistLogin from "./components/persist-login";
-import IsNotAuth from "./components/is-not-auth";
+import ForgotPassword from "./pages/forgot-password";
+import AccountVerification from "./pages/account-verification";
+import Chat from "./pages/chat";
 function App() {
   return (
     <BrowserRouter>
@@ -19,7 +22,10 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgotPassword" element={<ForgotPassword />} />
+            <Route path="/accountVerification" element={<AccountVerification />} />
           </Route>
+          <Route path="/chat" element={<Chat />} />
           {/* Private routes */}
           <Route element={<RequireAuth />}>
             <Route path="/home" element={<Home />} />

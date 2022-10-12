@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../hooks";
 import { useNavigate, useLocation } from "react-router-dom";
 import useLogout from "../hooks/use-logout";
-import socket from "../services/socket";
 
 const Navbar = () => {
   const { auth } = useAuth();
@@ -16,7 +15,6 @@ const Navbar = () => {
   const onLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     await doLogout();
-    socket.disconnect();
     navigate("/");
   };
 
@@ -25,7 +23,10 @@ const Navbar = () => {
       <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
         <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
           <Link to="/" className="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white">
-            App Name
+            <div className="flex items-center">
+              <img className="mx-auto h-12 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=white" alt="Your Company" />
+              <span className="px-1">App Name</span>
+            </div>
           </Link>
           <button
             className="text-white cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"
@@ -42,17 +43,25 @@ const Navbar = () => {
                 <span className="ml-2">Private</span>
               </Link>
             </li>
+            <li className="nav-item">
+              <Link to="/chat" className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75">
+                <span className="ml-2">Chat</span>
+              </Link>
+            </li>
           </ul>
           {!auth.user ? (
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
-              <li className={`${location.pathname === "/register" ? "hidden" : ""} nav-item`}>
-                <Link to="/register" className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75">
-                  <span className="ml-2">Sign-up</span>
-                </Link>
-              </li>
               <li className={`${location.pathname === "/login" ? "hidden" : ""} nav-item`}>
                 <Link to="/login" className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75">
-                  <span className="ml-2">Login</span>
+                  <span className="ml-2">Log in</span>
+                </Link>
+              </li>
+              <li className={`${location.pathname === "/register" ? "hidden" : ""} nav-item`}>
+                <Link
+                  to="/register"
+                  className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-indigo-600 bg-white hover:opacity-75 rounded-md"
+                >
+                  <span className="ml-2">Sign up</span>
                 </Link>
               </li>
             </ul>
