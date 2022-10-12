@@ -19,8 +19,8 @@ const Navbar = () => {
   };
 
   return (
-    <header className="relative flex flex-wrap items-center justify-between px-2 py-3 bg-indigo-600 mb-3">
-      <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
+    <header className="relative flex flex-wrap items-center justify-between bg-indigo-600">
+      <div className="container mx-auto flex flex-wrap items-center justify-between">
         <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
           <Link to="/" className="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white">
             <div className="flex items-center">
@@ -51,12 +51,12 @@ const Navbar = () => {
           </ul>
           {!auth.user ? (
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
-              <li className={`${location.pathname === "/login" ? "hidden" : ""} nav-item`}>
+              <li className={`${location.pathname === "/login" ? "hidden" : ""} nav-item w-20`}>
                 <Link to="/login" className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75">
                   <span className="ml-2">Log in</span>
                 </Link>
               </li>
-              <li className={`${location.pathname === "/register" ? "hidden" : ""} nav-item`}>
+              <li className={`${location.pathname === "/register" ? "hidden" : ""} nav-item w-20`}>
                 <Link
                   to="/register"
                   className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-indigo-600 bg-white hover:opacity-75 rounded-md"
