@@ -4,7 +4,7 @@ import socket from "../services/socket";
 
 const useLogout = () => {
   const { setAuth } = useAuth();
-  const { doRequestPrivate } = useRequestPrivate({ url: "/logout", method: "get" });
+  const { doRequestPrivate } = useRequestPrivate({ url: "/auth/logout", method: "get" });
 
   const doLogout = async () => {
     await doRequestPrivate();

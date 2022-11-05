@@ -14,7 +14,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const { doRequest, errors } = useRequest({
-    url: "/login",
+    url: "/auth/login",
     method: "post",
     body: { [input.name]: input.value, password },
     onFailure: () => navigate("/accountVerification", { state: { [input.name]: input.value } }),

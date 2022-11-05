@@ -3,7 +3,7 @@ import socket from "../services/socket";
 import useAuth from "./use-auth";
 
 const useSocketSetup = () => {
-  const { setAuth } = useAuth();
+  const { auth, setAuth } = useAuth();
   useEffect(() => {
     socket.connect();
     socket.on("connect-error", () => {
@@ -12,7 +12,7 @@ const useSocketSetup = () => {
     return () => {
       socket.off("connect-error");
     };
-  }, [setAuth]);
+  }, [setAuth, auth]);
 };
 
 export default useSocketSetup;

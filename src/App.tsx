@@ -11,6 +11,8 @@ import Private from "./pages/private";
 import ForgotPassword from "./pages/forgot-password";
 import AccountVerification from "./pages/account-verification";
 import Chat from "./pages/chat";
+import Friends from "./pages/friends";
+
 function App() {
   return (
     <BrowserRouter>
@@ -30,6 +32,7 @@ function App() {
           <Route element={<RequireAuth />}>
             <Route path="/home" element={<Home />} />
             <Route path="/private" element={<Private />} />
+            <Route path="/friends" element={<Friends />} />
           </Route>
         </Route>
       </Routes>

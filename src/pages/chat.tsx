@@ -3,28 +3,60 @@ import MessagingContainer from "../components/chat/messaging-container";
 import Header from "../components/chat/header";
 import MessagesList from "../components/chat/messages-list";
 import MessageField from "../components/chat/message-field";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FriendsList from "../components/chat/friends-list";
-import { friendMessages } from "../components/chat/data";
+import { friendsMessages } from "../components/chat/data";
+import { useAuth, useRequestPrivate } from "../hooks";
+import socket from "../services/socket";
+
+interface UsersMessages {
+  displayName: string;
+  id: string;
+  lastMessage: string;
+  sender: string;
+  status: boolean;
+  thumbnail: string;
+  updatedAt: Date;
+  viewed: boolean;
+}
 
 const Chat = () => {
+  const { auth } = useAuth();
+  const [usersMessages, setUsersMessages] = useState<UsersMessages[]>([]);
   const [user, setUser] = useState<{ id: string; fullName: string; description: string; image: string; status: boolean } | null>(null);
-  const [messages, setMessages] = useState(!user ? [] : friendMessages[user.id]);
+  const [messages, setMessages] = useState(!user ? [] : friendsMessages[user.id]);
+  const { doRequestPrivate } = useRequestPrivate({ url: "/users/messages/friendsMessages", method: "get" });
+
+  useEffect(() => {
+    const getUsersMessages = async () => {
+      const { result } = await doRequestPrivate();
+      setUsersMessages([...result]);
+      console.log(result);
+    };
+    getUsersMessages();
+    socket.on("messageToClient", (data) => {
+      console.log(data);
+    });
+    return () => {
+      socket.off("messageToClient");
+    };
+  }, []);
 
   const onSendMessage = (message: { mine: boolean; text: string; avatar: string }) => {
     if (!user) return;
     setMessages([...messages, message]);
-    friendMessages[user.id].push(message);
+    socket.emit("messageToServer", { from: auth.user?.id, to: "6345b9b0997c36baae413430", type: "text", content: message.text });
+    friendsMessages[user.id].push(message);
   };
 
   const onSelect = (user: { id: string; fullName: string; description: string; image: string; status: boolean }) => {
     setUser(user);
-    setMessages(friendMessages[user.id]);
+    setMessages(friendsMessages[user.id]);
   };
 
   return (
     <div className="flex">
-      <FriendsList onSelect={onSelect} />
+      <FriendsList usersMessages={usersMessages} onSelect={onSelect} />
       <MessagingContainer>
         {!user ? (
           <></>

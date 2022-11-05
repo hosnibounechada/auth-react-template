@@ -6,7 +6,7 @@ const Register = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { doRequest, errors } = useRequest({ url: "/register", method: "post", body: { firstName, lastName, email, password } });
+  const { doRequest, errors } = useRequest({ url: "/auth/register", method: "post", body: { firstName, lastName, email, password } });
   const navigate = useNavigate();
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -2,7 +2,7 @@ import { useAuth, useRequest } from ".";
 import socket from "../services/socket";
 const useRefresh = () => {
   const { setAuth } = useAuth();
-  const { doRequest } = useRequest({ url: "/refresh", method: "get" });
+  const { doRequest } = useRequest({ url: "/auth/refresh", method: "get" });
 
   const doRefresh = async () => {
     try {

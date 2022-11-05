@@ -9,9 +9,9 @@ const ForgotPassword = () => {
 
   const [step, setStep] = useState(0);
 
-  const { doRequest: emailRequest } = useRequest({ url: "/forgotPassword", method: "post", body: { email: email } });
-  const { doRequest: codeRequest } = useRequest({ url: "/verifyCode", method: "post", body: { email, code } });
-  const { doRequest } = useRequest({ url: "/resetPassword", method: "post", body: { email, password, code } });
+  const { doRequest: emailRequest } = useRequest({ url: "/auth/forgotPassword", method: "post", body: { email: email } });
+  const { doRequest: codeRequest } = useRequest({ url: "/auth/verifyCode", method: "post", body: { email, code } });
+  const { doRequest } = useRequest({ url: "/auth/resetPassword", method: "post", body: { email, password, code } });
 
   const navigate = useNavigate();
 

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 const localMessage: { mine: boolean; text: string; avatar: string } = {
   mine: true,
   text: "Can be verified on any platform using docker",

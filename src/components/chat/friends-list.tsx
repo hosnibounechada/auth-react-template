@@ -2,7 +2,18 @@ import { useState } from "react";
 import FriendItem from "./friend-item";
 import { friends } from "./data";
 
-const FriendsList = ({ onSelect: onSelectUser }: { onSelect: CallableFunction }) => {
+interface UsersMessages {
+  displayName: string;
+  id: string;
+  lastMessage: string;
+  sender: string;
+  status: boolean;
+  thumbnail: string;
+  updatedAt: Date;
+  viewed: boolean;
+}
+
+const FriendsList = ({ usersMessages, onSelect: onSelectUser }: { usersMessages: UsersMessages[]; onSelect: CallableFunction }) => {
   const [selected, setSelected] = useState("");
 
   const onSelect = (id: string) => {

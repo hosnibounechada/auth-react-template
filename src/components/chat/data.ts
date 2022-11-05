@@ -68,30 +68,7 @@ export const friends: { [id: string]: { id: string; fullName: string; image: str
   },
 };
 
-// Messages with a single friend
-
-export const messages: { mine: boolean; text: string; avatar: string }[] = [
-  {
-    mine: false,
-    text: "Can be verified on any platform using docker",
-    avatar:
-      "https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144",
-  },
-  {
-    mine: true,
-    text: "Your error message says permission denied, npm global installs must be given root privileges.",
-    avatar:
-      "https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144",
-  },
-  {
-    mine: false,
-    text: "Can be verified on any platform using docker",
-    avatar:
-      "https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144",
-  },
-];
-
-export const friendMessages: { [id: string]: { mine: boolean; text: string; avatar: string }[] } = {
+export const friendsMessages: { [id: string]: { mine: boolean; text: string; avatar: string }[] } = {
   "111": [
     {
       mine: false,
