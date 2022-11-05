@@ -48,6 +48,11 @@ const Navbar = () => {
                 <span className="ml-2">Chat</span>
               </Link>
             </li>
+            <li className="nav-item">
+              <Link to="/friends" className="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75">
+                <span className="ml-2">Friends</span>
+              </Link>
+            </li>
           </ul>
           {!auth.user ? (
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
