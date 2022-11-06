@@ -13,12 +13,25 @@ interface UsersMessages {
   viewed: boolean;
 }
 
-const FriendsList = ({ usersMessages, onSelect: onSelectUser }: { usersMessages: UsersMessages[]; onSelect: CallableFunction }) => {
+interface UsersList {
+  [id: string]: {
+    id: string;
+    sender: string;
+    displayName: string;
+    thumbnail: string;
+    lastMessage: string;
+    time: Date;
+    viewed: boolean;
+    status: boolean;
+  };
+}
+
+const FriendsList = ({ users, onSelect: onSelectUser }: { users: UsersList; onSelect: CallableFunction }) => {
   const [selected, setSelected] = useState("");
 
   const onSelect = (id: string) => {
     setSelected(id);
-    const user = friends[id];
+    const user = users[id];
     onSelectUser(user);
   };
 
@@ -32,8 +45,8 @@ const FriendsList = ({ usersMessages, onSelect: onSelectUser }: { usersMessages:
       </div>
       <div className="flow-root h-[calc(100vh-134px)] overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
         <ul className="p-4 divide-y divide-gray-200 dark:divide-gray-700">
-          {Object.entries(friends).map(([id, friend]) => (
-            <FriendItem key={id} message={friend} selected={selected} onSelect={onSelect} />
+          {Object.entries(users).map(([id, friend]) => (
+            <FriendItem key={id} friend={friend} selected={selected} onSelect={onSelect} />
           ))}
           ;
         </ul>

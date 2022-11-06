@@ -5,11 +5,10 @@ import MessagesList from "../components/chat/messages-list";
 import MessageField from "../components/chat/message-field";
 import { useState, useEffect } from "react";
 import FriendsList from "../components/chat/friends-list";
-import { friendsMessages } from "../components/chat/data";
 import { useAuth, useRequestPrivate } from "../hooks";
 import socket from "../services/socket";
 
-interface UsersMessages {
+interface User {
   displayName: string;
   id: string;
   lastMessage: string;
@@ -20,20 +19,64 @@ interface UsersMessages {
   viewed: boolean;
 }
 
+interface UsersList {
+  [id: string]: {
+    id: string;
+    sender: string;
+    displayName: string;
+    thumbnail: string;
+    lastMessage: string;
+    time: Date;
+    viewed: boolean;
+    status: boolean;
+  };
+}
+
+interface Message {
+  from: string;
+  to: string;
+  type: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  id: string;
+}
+
+interface MessagesList {
+  mine: boolean;
+  text: string;
+  avatar: string;
+}
+
 const Chat = () => {
   const { auth } = useAuth();
-  const [usersMessages, setUsersMessages] = useState<UsersMessages[]>([]);
-  const [user, setUser] = useState<{ id: string; fullName: string; description: string; image: string; status: boolean } | null>(null);
-  const [messages, setMessages] = useState(!user ? [] : friendsMessages[user.id]);
-  const { doRequestPrivate } = useRequestPrivate({ url: "/users/messages/friendsMessages", method: "get" });
+  const [users, setUsers] = useState<UsersList>({});
+  const [user, setUser] = useState<{ id: string; displayName: string; lastMessage: string; thumbnail: string; status: boolean } | null>(null);
+  const [messages, setMessages] = useState<MessagesList[]>([]);
+  const { doRequestPrivate: doGetFriends } = useRequestPrivate({ url: "/users/messages/friendsMessages", method: "get" });
+  const { doRequestPrivate: doGetMessages } = useRequestPrivate({ url: `/messages/private/${user?.id}?page=0`, method: "get" });
 
   useEffect(() => {
-    const getUsersMessages = async () => {
-      const { result } = await doRequestPrivate();
-      setUsersMessages([...result]);
-      console.log(result);
+    const getUsers = async () => {
+      const { result } = await doGetFriends();
+      const res = result.reduce((r: UsersList, e: User) => {
+        r[e.id] = {
+          id: e.id,
+          sender: e.sender,
+          displayName: e.displayName,
+          thumbnail: e.thumbnail,
+          lastMessage: e.lastMessage,
+          time: e.updatedAt,
+          viewed: e.viewed,
+          status: e.status,
+        };
+        return r;
+      }, {});
+      setUsers({ ...res });
+      if (result.length > 0) setUser(result[0]);
     };
-    getUsersMessages();
+    getUsers();
+
     socket.on("messageToClient", (data) => {
       console.log(data);
     });
@@ -42,21 +85,38 @@ const Chat = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const getMessages = async () => {
+      if (!user) return;
+      const { messages: userMessages } = await doGetMessages();
+      if (!userMessages) return;
+      const reversedArray = userMessages.reverse();
+      const result = reversedArray.map((message: Message) => {
+        return {
+          mine: message.from === auth.user?.id,
+          text: message.content,
+          avatar: user.thumbnail,
+        };
+      });
+      setMessages([...result]);
+    };
+
+    getMessages();
+  }, [user]);
+
   const onSendMessage = (message: { mine: boolean; text: string; avatar: string }) => {
     if (!user) return;
+    socket.emit("messageToServer", { from: auth.user?.id, to: user.id, type: "text", content: message.text });
     setMessages([...messages, message]);
-    socket.emit("messageToServer", { from: auth.user?.id, to: "6345b9b0997c36baae413430", type: "text", content: message.text });
-    friendsMessages[user.id].push(message);
   };
 
-  const onSelect = (user: { id: string; fullName: string; description: string; image: string; status: boolean }) => {
+  const onSelect = async (user: { id: string; displayName: string; lastMessage: string; thumbnail: string; status: boolean }) => {
     setUser(user);
-    setMessages(friendsMessages[user.id]);
   };
 
   return (
     <div className="flex">
-      <FriendsList usersMessages={usersMessages} onSelect={onSelect} />
+      <FriendsList users={users} onSelect={onSelect} />
       <MessagingContainer>
         {!user ? (
           <></>

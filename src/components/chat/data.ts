@@ -69,7 +69,7 @@ export const friends: { [id: string]: { id: string; fullName: string; image: str
 };
 
 export const friendsMessages: { [id: string]: { mine: boolean; text: string; avatar: string }[] } = {
-  "111": [
+  "635192fc84ef1205fb2afbf8": [
     {
       mine: false,
       text: "Vitae nunc sed velit dignissim sodales. Eget nullam non nisi est sit. Rhoncus urna neque viverra justo nec ultrices dui. Vitae auctor eu augue ut lectus arcu bibendum",
@@ -83,7 +83,7 @@ export const friendsMessages: { [id: string]: { mine: boolean; text: string; ava
         "https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144",
     },
   ],
-  "222": [
+  "6352d9380503a2c771b5b328": [
     {
       mine: false,
       text: "Nunc sed blandit libero volutpat sed cras. Vitae semper quis lectus nulla.",

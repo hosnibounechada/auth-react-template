@@ -11,7 +11,7 @@ function MessageField({
   user,
   onSendMessage,
 }: {
-  user: { id: string; fullName: string; description: string; image: string; status: boolean } | null;
+  user: { id: string; displayName: string; lastMessage: string; thumbnail: string; status: boolean } | null;
   onSendMessage: CallableFunction;
 }) {
   const [text, setText] = useState("");

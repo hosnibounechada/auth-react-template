@@ -1,8 +1,8 @@
 import React from "react";
 
-function Header({ user }: { user: { id: string; fullName: string; description: string; image: string; status: boolean } | null }) {
+function Header({ user }: { user: { id: string; displayName: string; lastMessage: string; thumbnail: string; status: boolean } | null }) {
   if (!user) return <></>;
-  const { fullName, description, image, status } = user;
+  const { displayName, lastMessage, thumbnail, status } = user;
   return (
     <div className="flex sm:items-center justify-between py-3 border-b-2 border-gray-200">
       <div className="relative flex items-center space-x-4">
@@ -12,13 +12,13 @@ function Header({ user }: { user: { id: string; fullName: string; description: s
               <circle cx="8" cy="8" r="8" fill="currentColor"></circle>
             </svg>
           </span>
-          <img src={image} alt="" className="w-10 sm:w-16 h-10 sm:h-16 rounded-full" />
+          <img src={thumbnail} alt="" className="w-10 sm:w-16 h-10 sm:h-16 rounded-full" />
         </div>
         <div className="flex flex-col leading-tight">
           <div className="text-2xl mt-1 flex items-center">
-            <span className="text-gray-700 mr-3">{fullName}</span>
+            <span className="text-gray-700 mr-3">{displayName}</span>
           </div>
-          <span className="text-lg text-gray-600">{description}</span>
+          <span className="text-lg text-gray-600">{lastMessage}</span>
         </div>
       </div>
       <div className="flex items-center space-x-2">

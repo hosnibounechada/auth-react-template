@@ -27,12 +27,12 @@ function App() {
             <Route path="/forgotPassword" element={<ForgotPassword />} />
             <Route path="/accountVerification" element={<AccountVerification />} />
           </Route>
-          <Route path="/chat" element={<Chat />} />
           {/* Private routes */}
           <Route element={<RequireAuth />}>
             <Route path="/home" element={<Home />} />
             <Route path="/private" element={<Private />} />
             <Route path="/friends" element={<Friends />} />
+            <Route path="/chat" element={<Chat />} />
           </Route>
         </Route>
       </Routes>
