@@ -42,7 +42,7 @@ interface Message {
   id: string;
 }
 
-interface MessagesList {
+interface MessageProps {
   mine: boolean;
   text: string;
   avatar: string;
@@ -52,7 +52,7 @@ const Chat = () => {
   const { auth } = useAuth();
   const [users, setUsers] = useState<UsersList>({});
   const [user, setUser] = useState<{ id: string; displayName: string; lastMessage: string; thumbnail: string; status: boolean } | null>(null);
-  const [messages, setMessages] = useState<MessagesList[]>([]);
+  const [messages, setMessages] = useState<MessageProps[]>([]);
   const { doRequestPrivate: doGetFriends } = useRequestPrivate({ url: "/users/messages/friendsMessages", method: "get" });
   const { doRequestPrivate: doGetMessages } = useRequestPrivate({ url: `/messages/private/${user?.id}?page=0`, method: "get" });
 
