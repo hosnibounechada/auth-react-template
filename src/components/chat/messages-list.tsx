@@ -1,13 +1,23 @@
 import MessageItem from "./message-item";
 import { useEffect, useRef } from "react";
+import { useMessages } from "../../hooks";
 
-const MessagesList = ({ messages }: { messages: { mine: boolean; text: string; avatar: string }[] }) => {
+const MessagesList = ({ onScrollTop }: { onScrollTop: CallableFunction }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const { messages } = useMessages();
 
   useEffect(() => {
-    ref.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
+    var varRef = ref.current;
+    const handleScroll = () => {
+      if (varRef?.scrollTop === 0) onScrollTop();
+    };
 
+    varRef?.addEventListener("scroll", handleScroll);
+
+    return () => {
+      varRef?.removeEventListener("scroll", handleScroll);
+    };
+  }, [onScrollTop]);
   return (
     <div
       ref={ref}

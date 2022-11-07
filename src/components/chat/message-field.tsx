@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useMessages } from "../../hooks";
+import useAuth from "../../hooks/use-auth";
+import socket from "../../services/socket";
 
 const localMessage: { mine: boolean; text: string; avatar: string } = {
   mine: true,
@@ -7,20 +10,19 @@ const localMessage: { mine: boolean; text: string; avatar: string } = {
     "https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144",
 };
 
-function MessageField({
-  user,
-  onSendMessage,
-}: {
-  user: { id: string; displayName: string; lastMessage: string; thumbnail: string; status: boolean } | null;
-  onSendMessage: CallableFunction;
-}) {
+function MessageField({ user }: { user: { id: string; displayName: string; lastMessage: string; thumbnail: string; status: boolean } | null }) {
+  const { auth } = useAuth();
+  const { messages, setMessages } = useMessages();
   const [text, setText] = useState("");
 
   if (!user) return <></>;
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (text.length !== 0) onSendMessage({ ...localMessage, text });
+    if (text.length !== 0) {
+      socket.emit("messageToServer", { from: auth.user?.id, to: user.id, type: "text", content: text });
+      setMessages([...messages, { ...localMessage, text }]);
+    }
     setText("");
   };
 

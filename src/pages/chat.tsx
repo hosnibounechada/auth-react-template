@@ -5,7 +5,7 @@ import MessagesList from "../components/chat/messages-list";
 import MessageField from "../components/chat/message-field";
 import { useState, useEffect } from "react";
 import FriendsList from "../components/chat/friends-list";
-import { useAuth, useRequestPrivate } from "../hooks";
+import { useAuth, useMessages, useRequestPrivate } from "../hooks";
 import socket from "../services/socket";
 
 interface User {
@@ -42,19 +42,14 @@ interface Message {
   id: string;
 }
 
-interface MessageProps {
-  mine: boolean;
-  text: string;
-  avatar: string;
-}
-
 const Chat = () => {
   const { auth } = useAuth();
   const [users, setUsers] = useState<UsersList>({});
   const [user, setUser] = useState<{ id: string; displayName: string; lastMessage: string; thumbnail: string; status: boolean } | null>(null);
-  const [messages, setMessages] = useState<MessageProps[]>([]);
+  const [page, setPage] = useState(0);
+  const { messages, setMessages } = useMessages();
   const { doRequestPrivate: doGetFriends } = useRequestPrivate({ url: "/users/messages/friendsMessages", method: "get" });
-  const { doRequestPrivate: doGetMessages } = useRequestPrivate({ url: `/messages/private/${user?.id}?page=0`, method: "get" });
+  const { doRequestPrivate: doGetMessages } = useRequestPrivate({ url: `/messages/private/${user?.id}?page=${page}`, method: "get" });
 
   useEffect(() => {
     const getUsers = async () => {
@@ -100,18 +95,36 @@ const Chat = () => {
       });
       setMessages([...result]);
     };
-
     getMessages();
   }, [user]);
 
-  const onSendMessage = (message: { mine: boolean; text: string; avatar: string }) => {
-    if (!user) return;
-    socket.emit("messageToServer", { from: auth.user?.id, to: user.id, type: "text", content: message.text });
-    setMessages([...messages, message]);
-  };
+  useEffect(() => {
+    const getMessages = async () => {
+      if (!user) return;
+      const { messages: userMessages } = await doGetMessages();
+      if (!userMessages) return;
+      const reversedArray = userMessages.reverse();
+      const result = reversedArray.map((message: Message) => {
+        return {
+          mine: message.from === auth.user?.id,
+          text: message.content,
+          avatar: user.thumbnail,
+        };
+      });
+      setMessages([...result, ...messages]);
+    };
+
+    getMessages();
+  }, [page]);
 
   const onSelect = async (user: { id: string; displayName: string; lastMessage: string; thumbnail: string; status: boolean }) => {
     setUser(user);
+    setMessages([]);
+    setPage(0);
+  };
+
+  const onScrollTop = () => {
+    setPage((prev) => ++prev);
   };
 
   return (
@@ -123,8 +136,8 @@ const Chat = () => {
         ) : (
           <>
             <Header user={user} />
-            <MessagesList messages={messages} />
-            <MessageField user={user} onSendMessage={onSendMessage} />
+            <MessagesList onScrollTop={onScrollTop} />
+            <MessageField user={user} />
           </>
         )}
       </MessagingContainer>
