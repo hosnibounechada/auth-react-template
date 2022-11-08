@@ -24,4 +24,4 @@ const MessageItem = ({ mine, text, avatar }: { mine: boolean; text: string; avat
   );
 };
 
-export default MessageItem;
+export { MessageItem };

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useMessages } from "../../hooks";
+import { useChat } from "../../hooks";
 import useAuth from "../../hooks/use-auth";
 import socket from "../../services/socket";
 
@@ -10,9 +10,10 @@ const localMessage: { mine: boolean; text: string; avatar: string } = {
     "https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144",
 };
 
-function MessageField({ user }: { user: { id: string; displayName: string; lastMessage: string; thumbnail: string; status: boolean } | null }) {
+function MessageField() {
   const { auth } = useAuth();
-  const { messages, setMessages } = useMessages();
+  const { user } = useChat();
+  const { messages, setMessages } = useChat();
   const [text, setText] = useState("");
 
   if (!user) return <></>;
@@ -109,4 +110,4 @@ function MessageField({ user }: { user: { id: string; displayName: string; lastM
   );
 }
 
-export default MessageField;
+export { MessageField };

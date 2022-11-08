@@ -1,5 +1,3 @@
-import React from "react";
-
 interface User {
   displayName: string;
   id: string;
@@ -37,4 +35,4 @@ const FriendItem = ({ friend, selected, onSelect }: { friend: User; selected: st
   );
 };
 
-export default FriendItem;
+export { FriendItem };

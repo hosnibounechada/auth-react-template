@@ -1,10 +1,10 @@
-import MessageItem from "./message-item";
+import { MessageItem } from "./message-item";
 import { useEffect, useRef } from "react";
-import { useMessages } from "../../hooks";
+import { useChat } from "../../hooks";
 
 const MessagesList = ({ onScrollTop }: { onScrollTop: CallableFunction }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { messages } = useMessages();
+  const { messages } = useChat();
 
   useEffect(() => {
     var varRef = ref.current;
@@ -31,4 +31,4 @@ const MessagesList = ({ onScrollTop }: { onScrollTop: CallableFunction }) => {
   );
 };
 
-export default MessagesList;
+export { MessagesList };

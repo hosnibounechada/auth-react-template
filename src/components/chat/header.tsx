@@ -1,6 +1,8 @@
 import React from "react";
+import { useChat } from "../../hooks";
 
-function Header({ user }: { user: { id: string; displayName: string; lastMessage: string; thumbnail: string; status: boolean } | null }) {
+function Header() {
+  const { user } = useChat();
   if (!user) return <></>;
   const { displayName, lastMessage, thumbnail, status } = user;
   return (
@@ -61,4 +63,4 @@ function Header({ user }: { user: { id: string; displayName: string; lastMessage
   );
 }
 
-export default Header;
+export { Header };

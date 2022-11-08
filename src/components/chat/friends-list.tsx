@@ -1,5 +1,5 @@
-import { useState } from "react";
-import FriendItem from "./friend-item";
+import { useChat } from "../../hooks";
+import { FriendItem } from "./friend-item";
 
 interface UsersList {
   [id: string]: {
@@ -14,13 +14,12 @@ interface UsersList {
   };
 }
 
-const FriendsList = ({ users, onSelect: onSelectUser }: { users: UsersList; onSelect: CallableFunction }) => {
-  const [selected, setSelected] = useState("");
+const FriendsList = ({ users }: { users: UsersList }) => {
+  const { user, setUser } = useChat();
 
   const onSelect = (id: string) => {
-    setSelected(id);
-    const user = users[id];
-    onSelectUser(user);
+    if (id === user?.id) return;
+    setUser(users[id]);
   };
 
   return (
@@ -34,7 +33,7 @@ const FriendsList = ({ users, onSelect: onSelectUser }: { users: UsersList; onSe
       <div className="flow-root h-[calc(100vh-134px)] overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
         <ul className="p-4 divide-y divide-gray-200 dark:divide-gray-700">
           {Object.entries(users).map(([id, friend]) => (
-            <FriendItem key={id} friend={friend} selected={selected} onSelect={onSelect} />
+            <FriendItem key={id} friend={friend} selected={user?.id!} onSelect={onSelect} />
           ))}
           ;
         </ul>
@@ -43,4 +42,4 @@ const FriendsList = ({ users, onSelect: onSelectUser }: { users: UsersList; onSe
   );
 };
 
-export default FriendsList;
+export { FriendsList };
