@@ -1,11 +1,7 @@
 import "../components/chat/style.css";
-import MessagingContainer from "../components/chat/messaging-container";
-import Header from "../components/chat/header";
-import MessagesList from "../components/chat/messages-list";
-import MessageField from "../components/chat/message-field";
 import { useState, useEffect } from "react";
-import FriendsList from "../components/chat/friends-list";
-import { useAuth, useMessages, useRequestPrivate } from "../hooks";
+import { FriendsList, MessagingContainer, Header, MessagesList, MessageField } from "../components/chat";
+import { useAuth, useChat, useRequestPrivate } from "../hooks";
 import socket from "../services/socket";
 
 interface User {
@@ -44,10 +40,8 @@ interface Message {
 
 const Chat = () => {
   const { auth } = useAuth();
+  const { user, setUser, messages, setMessages, page, setPage } = useChat();
   const [users, setUsers] = useState<UsersList>({});
-  const [user, setUser] = useState<{ id: string; displayName: string; lastMessage: string; thumbnail: string; status: boolean } | null>(null);
-  const [page, setPage] = useState(0);
-  const { messages, setMessages } = useMessages();
   const { doRequestPrivate: doGetFriends } = useRequestPrivate({ url: "/users/messages/friendsMessages", method: "get" });
   const { doRequestPrivate: doGetMessages } = useRequestPrivate({ url: `/messages/private/${user?.id}?page=${page}`, method: "get" });
 
@@ -71,14 +65,16 @@ const Chat = () => {
       if (result.length > 0) setUser(result[0]);
     };
     getUsers();
+  }, []);
 
+  useEffect(() => {
     socket.on("messageToClient", (data) => {
-      console.log(data);
+      if (data.from === user?.id) setMessages([...messages, { mine: false, text: data.content, avatar: user?.thumbnail! }]);
     });
     return () => {
       socket.off("messageToClient");
     };
-  }, []);
+  }, [messages, setMessages, user?.id, user?.thumbnail]);
 
   useEffect(() => {
     const getMessages = async () => {
@@ -95,6 +91,7 @@ const Chat = () => {
       });
       setMessages([...result]);
     };
+    setPage(0);
     getMessages();
   }, [user]);
 
@@ -117,27 +114,21 @@ const Chat = () => {
     getMessages();
   }, [page]);
 
-  const onSelect = async (user: { id: string; displayName: string; lastMessage: string; thumbnail: string; status: boolean }) => {
-    setUser(user);
-    setMessages([]);
-    setPage(0);
-  };
-
   const onScrollTop = () => {
     setPage((prev) => ++prev);
   };
 
   return (
     <div className="flex">
-      <FriendsList users={users} onSelect={onSelect} />
+      <FriendsList users={users} />
       <MessagingContainer>
         {!user ? (
           <></>
         ) : (
           <>
-            <Header user={user} />
+            <Header />
             <MessagesList onScrollTop={onScrollTop} />
-            <MessageField user={user} />
+            <MessageField />
           </>
         )}
       </MessagingContainer>
