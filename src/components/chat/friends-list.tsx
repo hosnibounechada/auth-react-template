@@ -1,26 +1,47 @@
-import { useChat } from "../../hooks";
+import { useEffect } from "react";
+import { useAuth, useChat, useRequestPrivate } from "../../hooks";
 import { FriendItem } from "./friend-item";
 
-interface UsersList {
-  [id: string]: {
-    id: string;
-    sender: string;
-    displayName: string;
-    thumbnail: string;
-    lastMessage: string;
-    time: Date;
-    viewed: boolean;
-    status: boolean;
-  };
+interface Message {
+  from: string;
+  to: string;
+  type: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  id: string;
 }
 
-const FriendsList = ({ users }: { users: UsersList }) => {
-  const { user, setUser } = useChat();
+const FriendsList = () => {
+  const { auth } = useAuth();
+  const { users, user, setUser, setMessages, setPage } = useChat();
+  const { doRequestPrivate: doGetMessages } = useRequestPrivate({ url: `/messages/private/${user?.id}?page=0`, method: "get" });
 
   const onSelect = (id: string) => {
     if (id === user?.id) return;
     setUser(users[id]);
   };
+
+  useEffect(() => {
+    console.log("user useEffect");
+
+    const getMessages = async () => {
+      if (!user) return;
+      const { messages: userMessages } = await doGetMessages();
+      if (!userMessages) return;
+      const reversedArray = userMessages.reverse();
+      const result = reversedArray.map((message: Message) => {
+        return {
+          mine: message.from === auth.user?.id,
+          text: message.content,
+          avatar: user.thumbnail,
+        };
+      });
+      setMessages([...result]);
+    };
+    setPage(0);
+    getMessages();
+  }, [user]);
 
   return (
     <div className="w-full max-w-md bg-white border shadow-md dark:bg-gray-800 dark:border-gray-700">
