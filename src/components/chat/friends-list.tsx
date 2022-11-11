@@ -1,21 +1,12 @@
 import { useEffect } from "react";
-import { useAuth, useChat, useRequestPrivate } from "../../hooks";
+import { useChat, useRequestPrivate } from "../../hooks";
 import { FriendItem } from "./friend-item";
-
-interface Message {
-  from: string;
-  to: string;
-  type: string;
-  content: string;
-  createdAt: Date;
-  updatedAt: Date;
-  id: string;
-}
+import { UsersObj, UserAPI } from "../../types/chat";
 
 const FriendsList = () => {
-  const { auth } = useAuth();
-  const { users, user, setUser, setMessages, setPage } = useChat();
-  const { doRequestPrivate: doGetMessages } = useRequestPrivate({ url: `/messages/private/${user?.id}?page=0`, method: "get" });
+  const { users, setUsers, user, setUser } = useChat();
+
+  const { doRequestPrivate: doGetFriends } = useRequestPrivate({ url: "/users/messages/friendsMessages", method: "get" });
 
   const onSelect = (id: string) => {
     if (id === user?.id) return;
@@ -23,25 +14,27 @@ const FriendsList = () => {
   };
 
   useEffect(() => {
-    console.log("user useEffect");
-
-    const getMessages = async () => {
-      if (!user) return;
-      const { messages: userMessages } = await doGetMessages();
-      if (!userMessages) return;
-      const reversedArray = userMessages.reverse();
-      const result = reversedArray.map((message: Message) => {
-        return {
-          mine: message.from === auth.user?.id,
-          text: message.content,
-          avatar: user.thumbnail,
+    const getUsers = async () => {
+      const { result } = await doGetFriends();
+      const res = result.reduce((r: UsersObj, e: UserAPI) => {
+        r[e.id] = {
+          id: e.id,
+          sender: e.sender,
+          displayName: e.displayName,
+          thumbnail: e.thumbnail,
+          lastMessage: e.lastMessage,
+          time: e.updatedAt,
+          viewed: e.viewed,
+          status: e.status,
         };
-      });
-      setMessages([...result]);
+        return r;
+      }, {});
+      setUsers({ ...res });
+      console.log("initial friends list component");
+      if (result.length > 0) setUser(result[0]);
     };
-    setPage(0);
-    getMessages();
-  }, [user]);
+    getUsers();
+  }, []);
 
   return (
     <div className="w-full max-w-md bg-white border shadow-md dark:bg-gray-800 dark:border-gray-700">

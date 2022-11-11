@@ -6,16 +6,16 @@ import "./config/axios";
 // import { Provider } from "react-redux";
 // import { store } from "./app/store";
 import { AuthProvider } from "./context/auth-provider";
-import { MessagesProvider } from "./context/chat-provider";
+import { ChatProvider } from "./context/chat-provider";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
   <React.StrictMode>
     {/* <Provider store={store}> */}
     <AuthProvider>
-      <MessagesProvider>
+      <ChatProvider>
         <App />
-      </MessagesProvider>
+      </ChatProvider>
     </AuthProvider>
     {/* </Provider> */}
   </React.StrictMode>

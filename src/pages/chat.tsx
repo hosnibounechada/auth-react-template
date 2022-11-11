@@ -8,6 +8,7 @@ const Chat = () => {
   const { user, messages, setMessages } = useChat();
 
   useEffect(() => {
+    if (!user) return;
     console.log("socket useEffect");
 
     socket.on("messageToClient", (data) => {
@@ -18,7 +19,7 @@ const Chat = () => {
     return () => {
       socket.off("messageToClient");
     };
-  }, [messages, setMessages, user?.id, user?.thumbnail]);
+  }, [user]);
 
   return (
     <div className="flex">

@@ -13,6 +13,8 @@ import AccountVerification from "./pages/account-verification";
 import Chat from "./pages/chat";
 import Friends from "./pages/friends";
 
+import { ChatProvider } from "./context/chat-provider";
+
 function App() {
   return (
     <BrowserRouter>
