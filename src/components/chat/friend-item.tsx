@@ -28,7 +28,7 @@ const FriendItem = ({ friend, selected, onSelect }: { friend: User; selected: st
               <circle cx="6" cy="6" r="6" fill="currentColor"></circle>
             </svg>
           </span>
-          <p className="text-gray-500 truncate dark:text-gray-400">{time.toString()}</p>
+          {/* <p className="text-gray-500 truncate dark:text-gray-400">{time.toString()}</p> */}
         </div>
       </div>
     </li>

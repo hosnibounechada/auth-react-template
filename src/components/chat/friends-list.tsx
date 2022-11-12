@@ -29,8 +29,9 @@ const FriendsList = () => {
         };
         return r;
       }, {});
+
       setUsers({ ...res });
-      console.log("initial friends list component");
+
       if (result.length > 0) setUser(result[0]);
     };
     getUsers();

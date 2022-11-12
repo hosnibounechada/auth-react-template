@@ -36,7 +36,7 @@ const MessagesList = () => {
       setMessages([...result]);
     };
     if (!user) return;
-    console.log("page 0 useEffect");
+
     setPage(0);
     getMessages();
   }, [user]);
@@ -57,6 +57,7 @@ const MessagesList = () => {
       if (result.length > 0) setMessages([...result, ...messages]);
     };
     if (page <= 0) return;
+
     getMessages();
   }, [page]);
 

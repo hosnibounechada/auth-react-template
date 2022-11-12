@@ -12,7 +12,7 @@ const localMessage: { mine: boolean; text: string; avatar: string } = {
 
 function MessageField() {
   const { auth } = useAuth();
-  const { user } = useChat();
+  const { user, users, setUsers } = useChat();
   const { messages, setMessages } = useChat();
   const [text, setText] = useState("");
 
@@ -20,9 +20,12 @@ function MessageField() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (text.length !== 0) {
-      socket.emit("messageToServer", { from: auth.user?.id, to: user.id, type: "text", content: text });
+    if (text.length !== 0 && auth.user?.id) {
+      socket.emit("messageToServer", { from: auth.user.id, to: user.id, type: "text", content: text });
       setMessages([...messages, { ...localMessage, text }]);
+
+      const temp = { [user.id]: { ...users[user.id], lastMessage: text, sender: auth.user.id, viewed: false } };
+      setUsers({ ...users, ...temp });
     }
     setText("");
   };
