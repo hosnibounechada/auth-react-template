@@ -20,13 +20,16 @@ function MessageField() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (text.length !== 0 && auth.user?.id) {
-      socket.emit("messageToServer", { from: auth.user.id, to: user.id, type: "text", content: text });
-      setMessages([...messages, { ...localMessage, text }]);
+    if (text.length === 0 && !auth.user?.id) return;
 
-      const temp = { [user.id]: { ...users[user.id], lastMessage: text, sender: auth.user.id, viewed: false } };
+    socket.emit("messageToServer", { from: auth.user?.id, to: user.id, type: "text", content: text }, (response: any) => {
+      if (!response.status) return;
+
+      setMessages([...messages, { ...localMessage, text }]);
+      const temp = { [user.id]: { ...users[user.id], lastMessage: text, sender: auth.user?.id!, viewed: false } };
       setUsers({ ...users, ...temp });
-    }
+    });
+
     setText("");
   };
 
